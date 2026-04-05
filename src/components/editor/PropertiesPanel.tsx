@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { X, ChevronDown, ChevronRight, Palette, Type, Layout, Plus, Trash2 } from 'lucide-react';
-import { useEditorStore, useSelectedBlock, useCurrentProject } from '@/store/useEditorStore';
+import { X, ChevronDown, ChevronRight, Palette, Type, Layout, Plus, Trash2, Search } from 'lucide-react';
+import { useEditorStore, useSelectedBlock, useCurrentProject, useCurrentPage } from '@/store/useEditorStore';
 import { BG_OPTIONS, PADDING_OPTIONS, WIDTH_OPTIONS } from '@/lib/blockStyles';
 
 // ─── Reusable form atoms ───────────────────────────────────────────────────────
@@ -640,6 +640,120 @@ function TextProperties({ props, onChange }: { props: Record<string, unknown>; o
   );
 }
 
+function ImageProperties({ props, onChange }: { props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }) {
+  const p = props as { src: string; alt: string; caption?: string; align?: string; rounded: boolean; shadow: boolean; bg?: string; paddingY?: string; contentWidth?: string };
+  return (
+    <>
+      <Section title="Image">
+        <Field label="URL de l'image">
+          <TextInput value={p.src ?? ''} onChange={(v) => onChange({ src: v })} placeholder="https://exemple.com/image.jpg" />
+        </Field>
+        <Field label="Texte alternatif (SEO)">
+          <TextInput value={p.alt ?? ''} onChange={(v) => onChange({ alt: v })} placeholder="Description de l'image" />
+        </Field>
+        <Field label="Légende (optionnel)">
+          <TextInput value={p.caption ?? ''} onChange={(v) => onChange({ caption: v })} placeholder="Crédit ou description..." />
+        </Field>
+      </Section>
+      <Section title="Style">
+        <Field label="Alignement">
+          <Select value={p.align ?? 'center'} onChange={(v) => onChange({ align: v })} options={[
+            { value: 'left',   label: 'Gauche' },
+            { value: 'center', label: 'Centre' },
+            { value: 'right',  label: 'Droite' },
+          ]} />
+        </Field>
+        <Toggle value={!!p.rounded} onChange={(v) => onChange({ rounded: v })} label="Coins arrondis" />
+        <Toggle value={!!p.shadow}  onChange={(v) => onChange({ shadow: v })}  label="Ombre portée" />
+      </Section>
+      <LayoutPanel props={props} onChange={onChange} />
+    </>
+  );
+}
+
+// ─── SEO panel ────────────────────────────────────────────────────────────────
+
+function SeoPanel() {
+  const project = useCurrentProject();
+  const page    = useCurrentPage();
+  const { updatePageSeo, currentProjectId, currentPageId } = useEditorStore();
+
+  if (!project || !page || !currentProjectId || !currentPageId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-3 p-6 text-center">
+        <Search className="w-6 h-6 text-white/20" />
+        <p className="text-xs text-white/30">Aucune page sélectionnée</p>
+      </div>
+    );
+  }
+
+  const seo = page.seo ?? { title: '', description: '', slug: page.slug };
+
+  function update(partial: { title?: string; description?: string; slug?: string }) {
+    updatePageSeo(currentProjectId!, currentPageId!, partial);
+  }
+
+  const charCount = seo.description?.length ?? 0;
+  const titleCount = seo.title?.length ?? 0;
+
+  return (
+    <>
+      <Section title="Page en cours">
+        <p className="text-xs text-white/50 -mt-2">Page : <span className="text-white/80 font-medium">{page.name}</span></p>
+      </Section>
+      <Section title="Balise titre">
+        <Field label={`Titre SEO (${titleCount}/60)`}>
+          <TextInput
+            value={seo.title ?? ''}
+            onChange={(v) => update({ title: v })}
+            placeholder={project.name}
+          />
+        </Field>
+        <div className={`h-1 rounded-full mt-1 transition-all ${titleCount > 60 ? 'bg-rose-500' : titleCount > 40 ? 'bg-emerald-500' : 'bg-white/10'}`}
+          style={{ width: `${Math.min((titleCount / 60) * 100, 100)}%` }} />
+        <p className="text-[10px] text-white/25 mt-1">
+          {titleCount === 0 ? 'Idéal : 40–60 caractères' : titleCount > 60 ? 'Trop long — tronqué par Google' : 'Longueur idéale'}
+        </p>
+      </Section>
+      <Section title="Méta description">
+        <Field label={`Description (${charCount}/160)`}>
+          <TextInput
+            value={seo.description ?? ''}
+            onChange={(v) => update({ description: v })}
+            placeholder="Décrivez le contenu de cette page..."
+            multiline
+          />
+        </Field>
+        <div className={`h-1 rounded-full mt-1 transition-all ${charCount > 160 ? 'bg-rose-500' : charCount > 100 ? 'bg-emerald-500' : 'bg-white/10'}`}
+          style={{ width: `${Math.min((charCount / 160) * 100, 100)}%` }} />
+        <p className="text-[10px] text-white/25 mt-1">
+          {charCount === 0 ? 'Idéal : 100–160 caractères' : charCount > 160 ? 'Trop long — tronqué par Google' : 'Longueur idéale'}
+        </p>
+      </Section>
+      <Section title="URL (slug)">
+        <Field label="Chemin de la page">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-white/30 shrink-0">/</span>
+            <TextInput
+              value={(seo.slug ?? page.slug).replace(/^\//, '')}
+              onChange={(v) => update({ slug: `/${v.replace(/^\//, '')}` })}
+              placeholder="mon-url"
+            />
+          </div>
+        </Field>
+        <p className="text-[10px] text-white/25">Utilisez des tirets, pas d&apos;espaces ni majuscules</p>
+      </Section>
+      <Section title="Aperçu Google" defaultOpen={false}>
+        <div className="p-3 bg-white/3 rounded-xl space-y-1">
+          <p className="text-[13px] text-blue-400 truncate">{seo.title || project.name}</p>
+          <p className="text-[11px] text-emerald-400/70 truncate">votresite.com{seo.slug || page.slug}</p>
+          <p className="text-[11px] text-white/40 line-clamp-2 leading-relaxed">{seo.description || 'Aucune description — ajoutez une méta description ci-dessus.'}</p>
+        </div>
+      </Section>
+    </>
+  );
+}
+
 // ─── Theme panel ──────────────────────────────────────────────────────────────
 
 const THEME_COLORS = ['blue', 'violet', 'emerald', 'rose', 'amber', 'cyan'] as const;
@@ -697,12 +811,12 @@ function ThemePanel() {
 
 // ─── Main panel ───────────────────────────────────────────────────────────────
 
-type PanelTab = 'properties' | 'theme';
+type PanelTab = 'properties' | 'theme' | 'seo';
 
 const BLOCK_LABELS: Record<string, string> = {
   navbar: 'Navigation', hero: 'Héro', features: 'Fonctionnalités', stats: 'Statistiques',
   cta: 'Call to Action', pricing: 'Tarifs', faq: 'FAQ', testimonials: 'Témoignages',
-  logowall: 'Mur de logos', footer: 'Pied de page', text: 'Texte',
+  logowall: 'Mur de logos', footer: 'Pied de page', text: 'Texte', image: 'Image',
 };
 
 export default function PropertiesPanel() {
@@ -720,7 +834,7 @@ export default function PropertiesPanel() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 shrink-0">
         <div className="flex gap-1">
-          {([['properties', Layout, 'Propriétés'], ['theme', Palette, 'Thème']] as const).map(([id, Icon, label]) => (
+          {([['properties', Layout, 'Propriétés'], ['theme', Palette, 'Thème'], ['seo', Search, 'SEO']] as const).map(([id, Icon, label]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -746,6 +860,8 @@ export default function PropertiesPanel() {
       <div className="flex-1 overflow-y-auto">
         {tab === 'theme' ? (
           <ThemePanel />
+        ) : tab === 'seo' ? (
+          <SeoPanel />
         ) : block ? (
           <div>
             {/* Block label */}
@@ -771,6 +887,7 @@ export default function PropertiesPanel() {
             {block.type === 'logowall'     && <LogoWallProperties     props={block.props} onChange={handleChange} />}
             {block.type === 'footer'       && <FooterProperties       props={block.props} onChange={handleChange} />}
             {block.type === 'text'         && <TextProperties         props={block.props} onChange={handleChange} />}
+            {block.type === 'image'        && <ImageProperties        props={block.props} onChange={handleChange} />}
             {!Object.keys(BLOCK_LABELS).includes(block.type) && (
               <div className="p-4 text-sm text-white/40 text-center py-8">
                 <Layout className="w-6 h-6 mx-auto mb-2 opacity-30" />

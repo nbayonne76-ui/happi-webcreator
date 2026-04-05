@@ -144,11 +144,18 @@ export interface Block {
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
+export interface PageSeo {
+  title: string;
+  description: string;
+  slug: string;
+}
+
 export interface Page {
   id: string;
   name: string;
   slug: string;
   blocks: Block[];
+  seo?: PageSeo;
 }
 
 // ─── Project ─────────────────────────────────────────────────────────────────

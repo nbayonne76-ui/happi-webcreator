@@ -2,8 +2,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Block, DevicePreview, Page, Project, ThemeColor } from '@/types';
-import { createProject, TEMPLATES } from '@/lib/defaults';
+import { Block, DevicePreview, Page, PageSeo, Project } from '@/types';
+import { createProject } from '@/lib/defaults';
 import { nanoid } from '@/lib/nanoid';
 
 // ─── Editor slice ─────────────────────────────────────────────────────────────
@@ -63,6 +63,9 @@ interface ProjectsSlice {
 
   // Theme
   updateTheme: (projectId: string, theme: Partial<Project['theme']>) => void;
+
+  // SEO
+  updatePageSeo: (projectId: string, pageId: string, seo: Partial<PageSeo>) => void;
 }
 
 // ─── Combined store ───────────────────────────────────────────────────────────
@@ -281,6 +284,22 @@ export const useEditorStore = create<Store>()(
           projects: s.projects.map((p) =>
             p.id === projectId
               ? { ...p, theme: { ...p.theme, ...theme }, updatedAt: new Date().toISOString() }
+              : p
+          ),
+        }));
+      },
+
+      updatePageSeo: (projectId, pageId, seo) => {
+        set((s) => ({
+          projects: s.projects.map((p) =>
+            p.id === projectId
+              ? {
+                  ...p,
+                  updatedAt: new Date().toISOString(),
+                  pages: p.pages.map((pg) =>
+                    pg.id === pageId ? { ...pg, seo: { ...pg.seo, title: pg.seo?.title ?? '', description: pg.seo?.description ?? '', slug: pg.slug, ...seo } } : pg
+                  ),
+                }
               : p
           ),
         }));

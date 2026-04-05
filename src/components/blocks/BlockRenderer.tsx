@@ -12,6 +12,7 @@ import TestimonialsBlock from './TestimonialsBlock';
 import LogoWallBlock from './LogoWallBlock';
 import FooterBlock from './FooterBlock';
 import TextBlock from './TextBlock';
+import ImageBlock from './ImageBlock';
 
 interface BlockRendererProps {
   block: Block;
@@ -40,6 +41,7 @@ export default function BlockRenderer({ block, selected, onSelect, showOutlines 
       case 'logowall': return <LogoWallBlock props={block.props} />;
       case 'footer': return <FooterBlock props={block.props} />;
       case 'text': return <TextBlock props={block.props} />;
+      case 'image': return <ImageBlock props={block.props} />;
       case 'divider': return <hr className="border-white/10 my-8 mx-auto w-1/2" />;
       default:
         return (
