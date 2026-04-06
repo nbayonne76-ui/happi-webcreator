@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Search, MoreVertical, Pencil, Copy, Trash2,
-  Globe, Clock, Zap, LayoutTemplate, Sparkles, ArrowRight,
+  Globe, Clock, LayoutTemplate, Sparkles, ArrowRight,
 } from 'lucide-react';
 import AppShell from '@/components/ui/AppShell';
 import Modal from '@/components/ui/Modal';
@@ -23,14 +23,19 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 function timeAgo(isoDate: string): string {
-  const diff = Date.now() - new Date(isoDate).getTime();
+  const ts = new Date(isoDate).getTime();
+  if (isNaN(ts)) return '—';
+  const diff = Date.now() - ts;
+  if (diff < 0) return 'À l\'instant'; // clock skew guard
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'À l\'instant';
   if (mins < 60) return `Il y a ${mins} min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `Il y a ${hours}h`;
   const days = Math.floor(hours / 24);
-  return `Il y a ${days}j`;
+  if (days < 30) return `Il y a ${days}j`;
+  const months = Math.floor(days / 30);
+  return `Il y a ${months} mois`;
 }
 
 export default function DashboardPage() {

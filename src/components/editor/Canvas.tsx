@@ -9,17 +9,35 @@ import { DevicePreview } from '@/types';
 
 const DEVICE_WIDTHS: Record<DevicePreview, string> = {
   desktop: 'w-full',
-  tablet: 'w-[768px]',
-  mobile: 'w-[390px]',
+  tablet:  'w-[768px]',
+  mobile:  'w-[390px]',
 };
 
 export default function Canvas() {
-  const { selectedBlockId, selectBlock, devicePreview, showGrid, showOutlines, currentProjectId, currentPageId } = useEditorStore();
-  const blocks = useCurrentBlocks();
+  const {
+    selectedBlockId, selectBlock,
+    devicePreview, showGrid, showOutlines,
+    setActivePanel, setInsertAfterIndex,
+  } = useEditorStore((s) => ({
+    selectedBlockId:     s.selectedBlockId,
+    selectBlock:         s.selectBlock,
+    devicePreview:       s.devicePreview,
+    showGrid:            s.showGrid,
+    showOutlines:        s.showOutlines,
+    setActivePanel:      s.setActivePanel,
+    setInsertAfterIndex: s.setInsertAfterIndex,
+  }));
+  const blocks    = useCurrentBlocks();
   const canvasRef = useRef<HTMLDivElement>(null);
 
   function handleCanvasClick(e: React.MouseEvent) {
     if (e.target === canvasRef.current) selectBlock(null);
+  }
+
+  function handleInsertAfter(index: number, e: React.MouseEvent) {
+    e.stopPropagation();
+    setInsertAfterIndex(index);
+    setActivePanel('blocks');
   }
 
   const widthClass = DEVICE_WIDTHS[devicePreview];
@@ -37,7 +55,6 @@ export default function Canvas() {
         }`}
       >
         {blocks.length === 0 ? (
-          /* Empty canvas */
           <div className="flex flex-col items-center justify-center min-h-[70vh] gap-5 text-center">
             <div className="w-16 h-16 rounded-2xl bg-white/5 border border-dashed border-white/15 flex items-center justify-center">
               <MousePointer2 className="w-7 h-7 text-white/20" />
@@ -67,17 +84,14 @@ export default function Canvas() {
                   showOutlines={showOutlines}
                 />
 
-                {/* Insert between sections */}
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Insert-after button — appears between sections on hover */}
+                <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Focus sidebar add blocks
-                      useEditorStore.getState().setActivePanel('blocks');
-                    }}
+                    onClick={(e) => handleInsertAfter(index, e)}
+                    title={`Insérer une section après ${block.type}`}
                     className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-lg transition-colors"
                   >
-                    <Plus className="w-3 h-3" /> Ajouter
+                    <Plus className="w-3 h-3" /> Insérer ici
                   </button>
                 </div>
               </motion.div>
@@ -86,9 +100,10 @@ export default function Canvas() {
         )}
       </div>
 
-      {/* Device label */}
       {devicePreview !== 'desktop' && (
-        <div className="py-3 text-xs text-white/25 capitalize">{devicePreview} — {devicePreview === 'tablet' ? '768px' : '390px'}</div>
+        <div className="py-3 text-xs text-white/25 capitalize">
+          {devicePreview} — {devicePreview === 'tablet' ? '768px' : '390px'}
+        </div>
       )}
     </div>
   );

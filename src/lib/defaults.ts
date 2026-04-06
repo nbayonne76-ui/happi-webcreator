@@ -128,10 +128,17 @@ export const DEFAULT_BLOCK_PROPS: Record<string, Record<string, unknown>> = {
   image: {
     src: '',
     alt: 'Image',
-    width: 800,
-    height: 450,
+    caption: '',
+    align: 'center',
+    maxWidth: '100%',
     rounded: true,
     shadow: true,
+  },
+  divider: {
+    style: 'line',
+    width: 'md',
+    spacing: 'md',
+    bg: 'gray-950',
   },
   footer: {
     logo: 'MonSite',

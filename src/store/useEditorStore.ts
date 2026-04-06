@@ -24,6 +24,7 @@ interface EditorSlice {
   // Panel states
   activePanel: 'blocks' | 'layers' | 'pages' | null;
   propertiesOpen: boolean;
+  insertAfterIndex: number | null; // index after which the next added block should be inserted
 
   // Actions
   setCurrentProject: (id: string) => void;
@@ -32,6 +33,7 @@ interface EditorSlice {
   setDevicePreview: (device: DevicePreview) => void;
   setActivePanel: (panel: 'blocks' | 'layers' | 'pages' | null) => void;
   setPropertiesOpen: (open: boolean) => void;
+  setInsertAfterIndex: (index: number | null) => void;
   toggleGrid: () => void;
   toggleOutlines: () => void;
   undo: () => void;
@@ -86,6 +88,7 @@ export const useEditorStore = create<Store>()(
       future: [],
       activePanel: 'blocks',
       propertiesOpen: false,
+      insertAfterIndex: null,
 
       // ── Projects ──
       projects: [],
@@ -111,6 +114,8 @@ export const useEditorStore = create<Store>()(
       setActivePanel: (panel) => set({ activePanel: panel }),
 
       setPropertiesOpen: (open) => set({ propertiesOpen: open }),
+
+      setInsertAfterIndex: (index) => set({ insertAfterIndex: index }),
 
       toggleGrid: () => set((s) => ({ showGrid: !s.showGrid })),
 

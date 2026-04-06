@@ -149,7 +149,7 @@ function SortableBlockRow({ block, index, total }: { block: Block; index: number
 function PageRow({ page, isCurrent }: { page: { id: string; name: string; slug: string }; isCurrent: boolean }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(page.name);
-  const { currentProjectId, currentPageId, renamePage, removePage } = useEditorStore();
+  const { currentProjectId, renamePage, removePage } = useEditorStore();
 
   function confirm() {
     if (draft.trim() && currentProjectId) renamePage(currentProjectId, page.id, draft.trim());
@@ -209,7 +209,7 @@ type Tab = 'blocks' | 'layers';
 
 export default function Sidebar() {
   const [tab, setTab] = useState<Tab>('blocks');
-  const { currentProjectId, currentPageId, selectBlock, addBlock, addPage } = useEditorStore();
+  const { currentProjectId, currentPageId, selectBlock, addBlock, addPage, insertAfterIndex, setInsertAfterIndex } = useEditorStore();
   const blocks = useCurrentBlocks();
   const project = useCurrentProject();
 
@@ -218,8 +218,11 @@ export default function Sidebar() {
   function handleAddBlock(type: BlockType) {
     if (!currentProjectId || !currentPageId) return;
     const block = createBlock(type);
-    addBlock(currentProjectId, currentPageId, block);
+    // If insertAfterIndex is set (from Canvas insert button), insert at that position
+    const insertIndex = insertAfterIndex !== null ? insertAfterIndex + 1 : undefined;
+    addBlock(currentProjectId, currentPageId, block, insertIndex);
     selectBlock(block.id);
+    setInsertAfterIndex(null); // reset after use
   }
 
   function handleDragEnd(event: DragEndEvent) {

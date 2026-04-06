@@ -13,6 +13,7 @@ import LogoWallBlock from './LogoWallBlock';
 import FooterBlock from './FooterBlock';
 import TextBlock from './TextBlock';
 import ImageBlock from './ImageBlock';
+import DividerBlock from './DividerBlock';
 
 interface BlockRendererProps {
   block: Block;
@@ -42,7 +43,7 @@ export default function BlockRenderer({ block, selected, onSelect, showOutlines 
       case 'footer': return <FooterBlock props={block.props} />;
       case 'text': return <TextBlock props={block.props} />;
       case 'image': return <ImageBlock props={block.props} />;
-      case 'divider': return <hr className="border-white/10 my-8 mx-auto w-1/2" />;
+      case 'divider': return <DividerBlock props={block.props} />;
       default:
         return (
           <div className="py-16 px-8 flex items-center justify-center text-white/30 text-sm border border-dashed border-white/10 m-4 rounded-xl">

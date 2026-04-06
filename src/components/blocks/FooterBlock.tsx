@@ -1,20 +1,24 @@
 import { Zap } from 'lucide-react';
-import { getBgClass, getTextColors } from '@/lib/blockStyles';
+import { getBgClass, getPaddingClass, getWidthClass, getTextColors } from '@/lib/blockStyles';
 
 export default function FooterBlock({ props }: { props: Record<string, unknown> }) {
   const p = props as {
     logo: string; description: string;
     columns: { title: string; links: { label: string; href: string }[] }[];
     showStatus: boolean; copyright: string;
-    bg?: string;
+    bg?: string; paddingY?: string; contentWidth?: string;
   };
 
-  const bgClass = getBgClass(p.bg);
-  const tc = getTextColors(p.bg);
+  const bgClass      = getBgClass(p.bg);
+  const paddingClass = getPaddingClass(p.paddingY ?? 'lg');
+  const widthClass   = getWidthClass(p.contentWidth ?? 'boxed');
+  const tc           = getTextColors(p.bg);
+  const isLight      = tc.h === 'text-gray-900';
+  const linkHover    = isLight ? 'hover:text-gray-900' : 'hover:text-white';
 
   return (
-    <footer className={`${bgClass} border-t ${tc.border} py-16 px-8`}>
-      <div className="max-w-6xl mx-auto">
+    <footer className={`${bgClass} border-t ${tc.border} ${paddingClass} px-8`}>
+      <div className={widthClass}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -31,7 +35,7 @@ export default function FooterBlock({ props }: { props: Record<string, unknown> 
               <ul className="space-y-2.5">
                 {(col.links ?? []).map((link, j) => (
                   <li key={j}>
-                    <a href={link.href} className={`text-sm ${tc.muted} hover:${tc.h} transition-colors`}>{link.label}</a>
+                    <a href={link.href} className={`text-sm ${tc.muted} ${linkHover} transition-colors`}>{link.label}</a>
                   </li>
                 ))}
               </ul>

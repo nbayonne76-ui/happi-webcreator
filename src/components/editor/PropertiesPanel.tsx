@@ -640,8 +640,53 @@ function TextProperties({ props, onChange }: { props: Record<string, unknown>; o
   );
 }
 
+function DividerProperties({ props, onChange }: { props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }) {
+  const p = props as { style?: string; width?: string; spacing?: string; bg?: string };
+  return (
+    <>
+      <Section title="Style">
+        <Field label="Type de ligne">
+          <Select value={p.style ?? 'line'} onChange={(v) => onChange({ style: v })} options={[
+            { value: 'line',   label: 'Ligne fine' },
+            { value: 'dashed', label: 'Tirets' },
+            { value: 'dotted', label: 'Pointillés' },
+            { value: 'thick',  label: 'Épaisse' },
+            { value: 'double', label: 'Double' },
+          ]} />
+        </Field>
+        <Field label="Largeur">
+          <Select value={p.width ?? 'md'} onChange={(v) => onChange({ width: v })} options={[
+            { value: 'sm',   label: 'Courte (25%)' },
+            { value: 'md',   label: 'Moyenne (50%)' },
+            { value: 'lg',   label: 'Large (75%)' },
+            { value: 'full', label: 'Pleine largeur' },
+          ]} />
+        </Field>
+        <Field label="Espacement vertical">
+          <Select value={p.spacing ?? 'md'} onChange={(v) => onChange({ spacing: v })} options={[
+            { value: 'sm', label: 'Petit' },
+            { value: 'md', label: 'Normal' },
+            { value: 'lg', label: 'Grand' },
+          ]} />
+        </Field>
+      </Section>
+      <Section title="Fond">
+        <Field label="Couleur de fond">
+          <div className="flex flex-wrap gap-2">
+            {BG_OPTIONS.filter((o) => !o.value.startsWith('grad')).map((opt) => (
+              <button key={opt.value} title={opt.label} onClick={() => onChange({ bg: opt.value })}
+                className={`w-7 h-7 rounded-lg border-2 transition-all shrink-0 ${((props.bg as string) ?? 'gray-950') === opt.value ? 'border-blue-400 scale-110' : 'border-transparent hover:border-white/30'}`}
+                style={{ background: opt.swatch }} />
+            ))}
+          </div>
+        </Field>
+      </Section>
+    </>
+  );
+}
+
 function ImageProperties({ props, onChange }: { props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }) {
-  const p = props as { src: string; alt: string; caption?: string; align?: string; rounded: boolean; shadow: boolean; bg?: string; paddingY?: string; contentWidth?: string };
+  const p = props as { src: string; alt: string; caption?: string; align?: string; maxWidth?: string; rounded: boolean; shadow: boolean; bg?: string; paddingY?: string; contentWidth?: string };
   return (
     <>
       <Section title="Image">
@@ -653,6 +698,9 @@ function ImageProperties({ props, onChange }: { props: Record<string, unknown>; 
         </Field>
         <Field label="Légende (optionnel)">
           <TextInput value={p.caption ?? ''} onChange={(v) => onChange({ caption: v })} placeholder="Crédit ou description..." />
+        </Field>
+        <Field label="Largeur max (ex: 600px, 80%)">
+          <TextInput value={p.maxWidth ?? '100%'} onChange={(v) => onChange({ maxWidth: v })} placeholder="100%" />
         </Field>
       </Section>
       <Section title="Style">
@@ -805,6 +853,16 @@ function ThemePanel() {
           />
         </Field>
       </Section>
+      <Section title="Mode">
+        <Toggle
+          value={!!project.theme.darkMode}
+          onChange={(v) => updateTheme(currentProjectId, { darkMode: v })}
+          label="Mode sombre"
+        />
+        <p className="text-[10px] text-white/25 leading-relaxed">
+          Utilisé comme valeur par défaut pour les nouvelles sections.
+        </p>
+      </Section>
     </>
   );
 }
@@ -816,7 +874,7 @@ type PanelTab = 'properties' | 'theme' | 'seo';
 const BLOCK_LABELS: Record<string, string> = {
   navbar: 'Navigation', hero: 'Héro', features: 'Fonctionnalités', stats: 'Statistiques',
   cta: 'Call to Action', pricing: 'Tarifs', faq: 'FAQ', testimonials: 'Témoignages',
-  logowall: 'Mur de logos', footer: 'Pied de page', text: 'Texte', image: 'Image',
+  logowall: 'Mur de logos', footer: 'Pied de page', text: 'Texte', image: 'Image', divider: 'Séparateur',
 };
 
 export default function PropertiesPanel() {
@@ -888,6 +946,7 @@ export default function PropertiesPanel() {
             {block.type === 'footer'       && <FooterProperties       props={block.props} onChange={handleChange} />}
             {block.type === 'text'         && <TextProperties         props={block.props} onChange={handleChange} />}
             {block.type === 'image'        && <ImageProperties        props={block.props} onChange={handleChange} />}
+            {block.type === 'divider'      && <DividerProperties      props={block.props} onChange={handleChange} />}
             {!Object.keys(BLOCK_LABELS).includes(block.type) && (
               <div className="p-4 text-sm text-white/40 text-center py-8">
                 <Layout className="w-6 h-6 mx-auto mb-2 opacity-30" />

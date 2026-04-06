@@ -10,10 +10,8 @@ export type BlockType =
   | 'faq'
   | 'testimonials'
   | 'logowall'
-  | 'before-after'
   | 'text'
   | 'image'
-  | 'video'
   | 'divider'
   | 'footer';
 
@@ -106,8 +104,9 @@ export interface TextProps {
 export interface ImageProps {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  caption?: string;
+  align?: 'left' | 'center' | 'right';
+  maxWidth?: string; // e.g. "600px", "100%"
   rounded: boolean;
   shadow: boolean;
 }
