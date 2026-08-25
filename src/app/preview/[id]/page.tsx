@@ -5,7 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { X, Monitor, Tablet, Smartphone, ExternalLink } from 'lucide-react';
 import { useEditorStore } from '@/store/useEditorStore';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { Block, DevicePreview } from '@/types';
+import { Block, DevicePreview, ThemeColor } from '@/types';
+
+const ACCENT_MAP: Record<ThemeColor, { from: string; to: string; solid: string }> = {
+  blue:    { from: '#2563EB', to: '#7C3AED', solid: '#2563EB' },
+  violet:  { from: '#7C3AED', to: '#EC4899', solid: '#7C3AED' },
+  emerald: { from: '#10B981', to: '#06B6D4', solid: '#10B981' },
+  rose:    { from: '#F43F5E', to: '#FB923C', solid: '#F43F5E' },
+  amber:   { from: '#F59E0B', to: '#EF4444', solid: '#F59E0B' },
+  cyan:    { from: '#06B6D4', to: '#3B82F6', solid: '#06B6D4' },
+};
 
 const DEVICE_WIDTHS: Record<DevicePreview, string> = {
   desktop: 'w-full',
@@ -113,6 +122,12 @@ export default function PreviewPage() {
           className={`${DEVICE_WIDTHS[device]} bg-gray-950 min-h-full transition-all duration-300 relative ${
             device !== 'desktop' ? 'rounded-2xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/10' : ''
           }`}
+          style={{
+            fontFamily: `'${project.theme?.fontFamily ?? 'Inter'}', -apple-system, BlinkMacSystemFont, sans-serif`,
+            '--accent-from': (ACCENT_MAP[project.theme?.primaryColor as ThemeColor] ?? ACCENT_MAP.blue).from,
+            '--accent-to':   (ACCENT_MAP[project.theme?.primaryColor as ThemeColor] ?? ACCENT_MAP.blue).to,
+            '--accent':      (ACCENT_MAP[project.theme?.primaryColor as ThemeColor] ?? ACCENT_MAP.blue).solid,
+          } as React.CSSProperties}
         >
           {blocks.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-3">

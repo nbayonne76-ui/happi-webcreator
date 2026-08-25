@@ -1,9 +1,155 @@
 'use client';
 
 import { useState } from 'react';
-import { X, ChevronDown, ChevronRight, Palette, Type, Layout, Plus, Trash2, Search } from 'lucide-react';
+import { X, ChevronDown, ChevronRight, Palette, Type, Layout, Plus, Trash2, Search, Sparkles, Loader2, ImageIcon, ExternalLink, Zap } from 'lucide-react';
 import { useEditorStore, useSelectedBlock, useCurrentProject, useCurrentPage } from '@/store/useEditorStore';
 import { BG_OPTIONS, PADDING_OPTIONS, WIDTH_OPTIONS } from '@/lib/blockStyles';
+
+// ─── AI Enhance Button (Galileo-style) ───────────────────────────────────────
+
+function AiEnhanceButton({ blockType, props, onChange }: {
+  blockType: string;
+  props: Record<string, unknown>;
+  onChange: (p: Record<string, unknown>) => void;
+}) {
+  const [loading, setLoading] = useState(false);
+  const [instruction, setInstruction] = useState('');
+  const [open, setOpen] = useState(false);
+
+  async function handleEnhance() {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/enhance-block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blockType, currentProps: props, instruction: instruction.trim() || undefined }),
+      });
+      const data = await res.json();
+      if (data.props) onChange(data.props);
+      setOpen(false);
+      setInstruction('');
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="px-4 pb-3">
+      {open ? (
+        <div className="rounded-xl border border-violet-500/25 bg-violet-500/5 p-3 space-y-2">
+          <p className="text-[11px] text-violet-300 font-medium flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3" /> Améliorer avec Claude
+          </p>
+          <input
+            value={instruction}
+            onChange={(e) => setInstruction(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleEnhance()}
+            placeholder="Ex: Rendre plus percutant, ajouter de l'urgence..."
+            className="w-full px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-xs text-white placeholder-white/20 focus:outline-none focus:border-violet-500/50"
+          />
+          <div className="flex gap-2">
+            <button onClick={() => setOpen(false)} className="flex-1 py-1.5 rounded-lg text-xs text-white/40 hover:text-white bg-white/5 transition-colors">
+              Annuler
+            </button>
+            <button
+              onClick={handleEnhance}
+              disabled={loading}
+              className="flex-1 py-1.5 rounded-lg text-xs text-white font-medium bg-gradient-to-r from-violet-600 to-blue-600 disabled:opacity-50 flex items-center justify-center gap-1.5 transition-all"
+            >
+              {loading ? <><Loader2 className="w-3 h-3 animate-spin" /> Amélioration...</> : <><Sparkles className="w-3 h-3" /> Améliorer</>}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setOpen(true)}
+          className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-violet-500/20 bg-violet-500/5 text-violet-300 text-xs font-medium hover:bg-violet-500/10 hover:border-violet-500/40 transition-all"
+        >
+          <Sparkles className="w-3.5 h-3.5" /> Améliorer le contenu avec l&apos;IA
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── Unsplash image search (Canva/Playground-style) ──────────────────────────
+
+function UnsplashSearch({ onSelect }: { onSelect: (url: string) => void }) {
+  const [query, setQuery]   = useState('');
+  const [results, setResults] = useState<{ id: string; thumb: string; full: string; author: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  async function search() {
+    if (!query.trim()) return;
+    setLoading(true);
+    try {
+      const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+      if (!key || key === 'your_unsplash_key_here') {
+        // Demo: use picsum.photos as fallback
+        setResults(Array.from({ length: 8 }, (_, i) => ({
+          id:     `picsum-${i}`,
+          thumb:  `https://picsum.photos/seed/${query}-${i}/300/200`,
+          full:   `https://picsum.photos/seed/${query}-${i}/1600/900`,
+          author: 'Lorem Picsum',
+        })));
+        return;
+      }
+      const res  = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=8&orientation=landscape&client_id=${key}`);
+      const data = await res.json();
+      setResults((data.results ?? []).map((r: { id: string; urls: { thumb: string; full: string }; user: { name: string } }) => ({
+        id:     r.id,
+        thumb:  r.urls.thumb,
+        full:   r.urls.full,
+        author: r.user.name,
+      })));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-1.5">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && search()}
+          placeholder="Rechercher une image..."
+          className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-xs text-white placeholder-white/20 focus:outline-none focus:border-blue-500/50"
+        />
+        <button
+          onClick={search}
+          disabled={loading}
+          className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 flex items-center justify-center text-white disabled:opacity-50 transition-colors"
+        >
+          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+        </button>
+      </div>
+      {results.length > 0 && (
+        <div className="grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto">
+          {results.map((r) => (
+            <button
+              key={r.id}
+              onClick={() => onSelect(r.full)}
+              className="relative rounded-lg overflow-hidden aspect-video group"
+              title={`Photo par ${r.author}`}
+            >
+              <img src={r.thumb} alt="" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                <ExternalLink className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="text-[10px] text-white/20 text-center">
+        {results.length > 0 ? 'Photos via Unsplash / Lorem Picsum' : 'Unsplash · Press Entrée pour chercher'}
+      </p>
+    </div>
+  );
+}
 
 // ─── Reusable form atoms ───────────────────────────────────────────────────────
 
@@ -687,11 +833,24 @@ function DividerProperties({ props, onChange }: { props: Record<string, unknown>
 
 function ImageProperties({ props, onChange }: { props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }) {
   const p = props as { src: string; alt: string; caption?: string; align?: string; maxWidth?: string; rounded: boolean; shadow: boolean; bg?: string; paddingY?: string; contentWidth?: string };
+  const [showSearch, setShowSearch] = useState(false);
   return (
     <>
       <Section title="Image">
         <Field label="URL de l'image">
-          <TextInput value={p.src ?? ''} onChange={(v) => onChange({ src: v })} placeholder="https://exemple.com/image.jpg" />
+          <div className="space-y-2">
+            <TextInput value={p.src ?? ''} onChange={(v) => onChange({ src: v })} placeholder="https://exemple.com/image.jpg" />
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className="w-full flex items-center justify-center gap-2 py-1.5 rounded-lg border border-white/10 text-xs text-white/50 hover:text-white hover:border-white/20 transition-all"
+            >
+              <ImageIcon className="w-3.5 h-3.5" />
+              {showSearch ? 'Masquer la recherche' : 'Chercher une image (Unsplash)'}
+            </button>
+            {showSearch && (
+              <UnsplashSearch onSelect={(url) => { onChange({ src: url }); setShowSearch(false); }} />
+            )}
+          </div>
         </Field>
         <Field label="Texte alternatif (SEO)">
           <TextInput value={p.alt ?? ''} onChange={(v) => onChange({ alt: v })} placeholder="Description de l'image" />
@@ -869,7 +1028,52 @@ function ThemePanel() {
 
 // ─── Main panel ───────────────────────────────────────────────────────────────
 
-type PanelTab = 'properties' | 'theme' | 'seo';
+type PanelTab = 'properties' | 'theme' | 'seo' | 'animate';
+
+// ─── Animation panel ──────────────────────────────────────────────────────────
+
+const ANIMATION_OPTIONS = [
+  { value: 'none',        label: 'Aucune',       desc: 'Pas d\'animation' },
+  { value: 'fade-up',     label: 'Fade Up',      desc: 'Apparition depuis le bas' },
+  { value: 'fade-in',     label: 'Fade In',      desc: 'Apparition en fondu' },
+  { value: 'slide-left',  label: 'Slide Gauche', desc: 'Glissement depuis la gauche' },
+  { value: 'slide-right', label: 'Slide Droite', desc: 'Glissement depuis la droite' },
+  { value: 'zoom-in',     label: 'Zoom In',      desc: 'Apparition avec zoom' },
+  { value: 'flip-up',     label: 'Flip Up',      desc: 'Rotation 3D vers le haut' },
+];
+
+function AnimationPanel({ props, onChange }: { props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }) {
+  const current = (props.animation as string) ?? 'none';
+  return (
+    <div className="p-4 space-y-3">
+      <p className="text-[11px] text-white/40 uppercase tracking-wider font-medium">Animation au scroll</p>
+      <div className="space-y-1.5">
+        {ANIMATION_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onChange({ animation: opt.value })}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-left transition-all ${
+              current === opt.value
+                ? 'border-blue-500/60 bg-blue-500/10 text-blue-300'
+                : 'border-white/8 bg-white/3 text-white/60 hover:border-white/20 hover:text-white'
+            }`}
+          >
+            <div>
+              <p className="text-xs font-medium">{opt.label}</p>
+              <p className="text-[10px] opacity-60 mt-0.5">{opt.desc}</p>
+            </div>
+            {current === opt.value && (
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+            )}
+          </button>
+        ))}
+      </div>
+      <p className="text-[10px] text-white/20 leading-relaxed">
+        L&apos;animation se déclenche quand la section entre dans le viewport. Visible en aperçu et sur le site exporté.
+      </p>
+    </div>
+  );
+}
 
 const BLOCK_LABELS: Record<string, string> = {
   navbar: 'Navigation', hero: 'Héro', features: 'Fonctionnalités', stats: 'Statistiques',
@@ -892,7 +1096,7 @@ export default function PropertiesPanel() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 shrink-0">
         <div className="flex gap-1">
-          {([['properties', Layout, 'Propriétés'], ['theme', Palette, 'Thème'], ['seo', Search, 'SEO']] as const).map(([id, Icon, label]) => (
+          {([['properties', Layout, 'Propriétés'], ['theme', Palette, 'Thème'], ['seo', Search, 'SEO'], ['animate', Zap, 'Anim.']] as const).map(([id, Icon, label]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -920,6 +1124,8 @@ export default function PropertiesPanel() {
           <ThemePanel />
         ) : tab === 'seo' ? (
           <SeoPanel />
+        ) : tab === 'animate' && block ? (
+          <AnimationPanel props={block.props} onChange={handleChange} />
         ) : block ? (
           <div>
             {/* Block label */}
@@ -932,6 +1138,11 @@ export default function PropertiesPanel() {
                 <span className="text-xs text-white/25 ml-auto font-mono">{block.id.slice(0, 6)}</span>
               </div>
             </div>
+
+            {/* AI enhance — available for content-rich blocks */}
+            {['hero', 'features', 'testimonials', 'faq', 'cta', 'pricing', 'stats', 'logowall', 'footer', 'text'].includes(block.type) && (
+              <AiEnhanceButton blockType={block.type} props={block.props} onChange={handleChange} />
+            )}
 
             {/* Block editors */}
             {block.type === 'hero'         && <HeroProperties         props={block.props} onChange={handleChange} />}

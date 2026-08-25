@@ -46,6 +46,12 @@ body::before {
   100% { transform: translate(0, 0) scale(1); }
 }
 
+/* LogoWall marquee scroll */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }

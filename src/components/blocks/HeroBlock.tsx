@@ -43,19 +43,19 @@ export default function HeroBlock({ props }: { props: Record<string, unknown> })
 
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         {p.badge && (
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6" style={{ background: `color-mix(in srgb, var(--accent, #2563EB) 12%, transparent)`, border: `1px solid color-mix(in srgb, var(--accent, #2563EB) 25%, transparent)`, color: `var(--accent, #60A5FA)` }}>
             <Sparkles className="w-3.5 h-3.5" /> {p.badge}
           </span>
         )}
         <h1 className={`text-5xl md:text-6xl font-extrabold leading-tight mb-5 ${tc.h}`}>
           {p.title}{' '}
-          <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(90deg, var(--accent-from, #60A5FA), var(--accent-to, #A78BFA))` }}>
             {p.titleGradient}
           </span>
         </h1>
         <p className={`text-lg ${tc.body} max-w-2xl mx-auto mb-10 leading-relaxed`}>{p.subtitle}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <button className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-blue-500/20">
+          <button className="flex items-center gap-2 px-7 py-3.5 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity shadow-lg" style={{ background: `linear-gradient(135deg, var(--accent-from, #2563EB), var(--accent-to, #7C3AED))` }}>
             <Sparkles className="w-4 h-4" /> {p.ctaLabel || 'Commencer'}
           </button>
           {p.ctaSecondaryLabel && (

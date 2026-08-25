@@ -3,9 +3,20 @@
 import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, MousePointer2 } from 'lucide-react';
-import { useEditorStore, useCurrentBlocks } from '@/store/useEditorStore';
+import { useEditorStore, useCurrentBlocks, useCurrentProject } from '@/store/useEditorStore';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
-import { DevicePreview } from '@/types';
+import { DevicePreview, ThemeColor } from '@/types';
+
+// ─── Primary color → CSS gradient variables ───────────────────────────────────
+
+const ACCENT_MAP: Record<ThemeColor, { from: string; to: string; solid: string }> = {
+  blue:    { from: '#2563EB', to: '#7C3AED', solid: '#2563EB' },
+  violet:  { from: '#7C3AED', to: '#EC4899', solid: '#7C3AED' },
+  emerald: { from: '#10B981', to: '#06B6D4', solid: '#10B981' },
+  rose:    { from: '#F43F5E', to: '#FB923C', solid: '#F43F5E' },
+  amber:   { from: '#F59E0B', to: '#EF4444', solid: '#F59E0B' },
+  cyan:    { from: '#06B6D4', to: '#3B82F6', solid: '#06B6D4' },
+};
 
 const DEVICE_WIDTHS: Record<DevicePreview, string> = {
   desktop: 'w-full',
@@ -14,21 +25,20 @@ const DEVICE_WIDTHS: Record<DevicePreview, string> = {
 };
 
 export default function Canvas() {
-  const {
-    selectedBlockId, selectBlock,
-    devicePreview, showGrid, showOutlines,
-    setActivePanel, setInsertAfterIndex,
-  } = useEditorStore((s) => ({
-    selectedBlockId:     s.selectedBlockId,
-    selectBlock:         s.selectBlock,
-    devicePreview:       s.devicePreview,
-    showGrid:            s.showGrid,
-    showOutlines:        s.showOutlines,
-    setActivePanel:      s.setActivePanel,
-    setInsertAfterIndex: s.setInsertAfterIndex,
-  }));
+  const selectedBlockId     = useEditorStore((s) => s.selectedBlockId);
+  const selectBlock         = useEditorStore((s) => s.selectBlock);
+  const devicePreview       = useEditorStore((s) => s.devicePreview);
+  const showGrid            = useEditorStore((s) => s.showGrid);
+  const showOutlines        = useEditorStore((s) => s.showOutlines);
+  const setActivePanel      = useEditorStore((s) => s.setActivePanel);
+  const setInsertAfterIndex = useEditorStore((s) => s.setInsertAfterIndex);
   const blocks    = useCurrentBlocks();
+  const project   = useCurrentProject();
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  const fontFamily  = project?.theme?.fontFamily ?? 'Inter';
+  const primaryColor = (project?.theme?.primaryColor ?? 'blue') as ThemeColor;
+  const accent = ACCENT_MAP[primaryColor] ?? ACCENT_MAP.blue;
 
   function handleCanvasClick(e: React.MouseEvent) {
     if (e.target === canvasRef.current) selectBlock(null);
@@ -53,6 +63,12 @@ export default function Canvas() {
         className={`${widthClass} min-h-full bg-gray-950 transition-all duration-300 relative shadow-2xl ${
           devicePreview !== 'desktop' ? 'my-8 rounded-2xl overflow-hidden shadow-black/50 ring-1 ring-white/10' : ''
         }`}
+        style={{
+          fontFamily: `'${fontFamily}', -apple-system, BlinkMacSystemFont, sans-serif`,
+          '--accent-from': accent.from,
+          '--accent-to':   accent.to,
+          '--accent':      accent.solid,
+        } as React.CSSProperties}
       >
         {blocks.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[70vh] gap-5 text-center">

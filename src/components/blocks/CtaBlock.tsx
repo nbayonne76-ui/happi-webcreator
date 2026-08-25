@@ -34,7 +34,7 @@ export default function CtaBlock({ props }: { props: Record<string, unknown> }) 
           <h2 className={`text-4xl font-bold ${tc.h} mb-4`}>{p.title}</h2>
           <p className={`${tc.body} mb-8`}>{p.subtitle}</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold hover:opacity-90 transition-opacity">
+            <button className="flex items-center gap-2 px-7 py-3 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity" style={{ background: `linear-gradient(135deg, var(--accent-from, #2563EB), var(--accent-to, #7C3AED))` }}>
               <Sparkles className="w-4 h-4" /> {p.ctaLabel}
             </button>
             {p.ctaSecondaryLabel && (

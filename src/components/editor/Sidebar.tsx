@@ -208,8 +208,10 @@ function PageRow({ page, isCurrent }: { page: { id: string; name: string; slug: 
 type Tab = 'blocks' | 'layers';
 
 export default function Sidebar() {
-  const [tab, setTab] = useState<Tab>('blocks');
-  const { currentProjectId, currentPageId, selectBlock, addBlock, addPage, insertAfterIndex, setInsertAfterIndex } = useEditorStore();
+  const { currentProjectId, currentPageId, selectBlock, addBlock, addPage, insertAfterIndex, setInsertAfterIndex, activePanel, setActivePanel } = useEditorStore();
+  // Derive tab from store activePanel so Canvas insert-button can switch tabs
+  const tab: Tab = activePanel === 'layers' ? 'layers' : 'blocks';
+  const setTab = (t: Tab) => setActivePanel(t);
   const blocks = useCurrentBlocks();
   const project = useCurrentProject();
 

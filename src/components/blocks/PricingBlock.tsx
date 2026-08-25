@@ -1,10 +1,11 @@
 import { Check } from 'lucide-react';
 import { getBgClass, getPaddingClass, getWidthClass, getTextColors } from '@/lib/blockStyles';
 
-const COLOR_MAP: Record<string, { border: string; badge: string; btn: string }> = {
-  blue:   { border: 'border-blue-500/30',    badge: 'bg-blue-500/20 text-blue-300',       btn: 'bg-blue-600 hover:bg-blue-500' },
-  green:  { border: 'border-emerald-500/30', badge: 'bg-emerald-500/20 text-emerald-300', btn: 'bg-gradient-to-r from-emerald-500 to-teal-500' },
-  purple: { border: 'border-violet-500/30',  badge: 'bg-violet-500/20 text-violet-300',   btn: 'bg-violet-600 hover:bg-violet-500' },
+// Plan button uses CSS accent variable; border/badge still have fallback colors
+const COLOR_MAP: Record<string, { border: string; badge: string }> = {
+  blue:   { border: 'border-blue-500/30',    badge: 'bg-blue-500/20 text-blue-300'       },
+  green:  { border: 'border-emerald-500/30', badge: 'bg-emerald-500/20 text-emerald-300' },
+  purple: { border: 'border-violet-500/30',  badge: 'bg-violet-500/20 text-violet-300'   },
 };
 
 export default function PricingBlock({ props }: { props: Record<string, unknown> }) {
@@ -25,7 +26,7 @@ export default function PricingBlock({ props }: { props: Record<string, unknown>
       <div className={widthClass}>
         <div className="text-center mb-14">
           {p.badge && (
-            <span className="inline-block px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: `color-mix(in srgb, var(--accent, #7C3AED) 12%, transparent)`, border: `1px solid color-mix(in srgb, var(--accent, #7C3AED) 25%, transparent)`, color: `var(--accent, #A78BFA)` }}>
               {p.badge}
             </span>
           )}
@@ -57,7 +58,7 @@ export default function PricingBlock({ props }: { props: Record<string, unknown>
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-3 rounded-xl text-white font-semibold text-sm transition-opacity hover:opacity-90 ${c.btn}`}>Commencer</button>
+                <button className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-opacity hover:opacity-90" style={{ background: `linear-gradient(135deg, var(--accent-from, #2563EB), var(--accent-to, #7C3AED))` }}>Commencer</button>
               </div>
             );
           })}

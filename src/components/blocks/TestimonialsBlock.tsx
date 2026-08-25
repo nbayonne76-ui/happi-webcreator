@@ -35,7 +35,7 @@ export default function TestimonialsBlock({ props }: { props: Record<string, unk
               </div>
               <p className={`${tc.body} text-sm leading-relaxed mb-4`}>&ldquo;{item.text}&rdquo;</p>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: `linear-gradient(135deg, var(--accent-from, #3B82F6), var(--accent-to, #7C3AED))` }}>
                   {item.avatar || item.name?.slice(0, 2)}
                 </div>
                 <div>

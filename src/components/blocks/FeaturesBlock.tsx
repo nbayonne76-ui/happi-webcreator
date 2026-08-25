@@ -40,7 +40,7 @@ export default function FeaturesBlock({ props }: { props: Record<string, unknown
       <div className={widthClass}>
         <div className="text-center mb-14">
           {p.badge && (
-            <span className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: `color-mix(in srgb, var(--accent, #2563EB) 12%, transparent)`, border: `1px solid color-mix(in srgb, var(--accent, #2563EB) 25%, transparent)`, color: `var(--accent, #60A5FA)` }}>
               {p.badge}
             </span>
           )}
@@ -52,8 +52,8 @@ export default function FeaturesBlock({ props }: { props: Record<string, unknown
             const Icon = ICON_MAP[item.icon] ?? Zap;
             return (
               <div key={i} className={`rounded-2xl p-6 transition-all ${cardClass}`}>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 border border-blue-500/20 flex items-center justify-center mb-4">
-                  <Icon className="w-5 h-5 text-blue-400" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: `color-mix(in srgb, var(--accent, #2563EB) 15%, transparent)`, border: `1px solid color-mix(in srgb, var(--accent, #2563EB) 25%, transparent)` }}>
+                  <Icon className="w-5 h-5" style={{ color: `var(--accent, #60A5FA)` }} />
                 </div>
                 <h3 className={`font-semibold ${tc.h} mb-2`}>{item.title}</h3>
                 <p className={`text-sm ${tc.body} leading-relaxed`}>{item.description}</p>

@@ -22,7 +22,7 @@ export default function FooterBlock({ props }: { props: Record<string, unknown> 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `linear-gradient(135deg, var(--accent-from, #2563EB), var(--accent-to, #7C3AED))` }}>
                 <Zap className="w-3.5 h-3.5 text-white" />
               </div>
               <span className={`font-bold ${tc.h}`}>{p.logo}</span>

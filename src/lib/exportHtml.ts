@@ -60,13 +60,13 @@ function renderNavbar(props: Record<string, unknown>): string {
   return `
 <nav style="${bg}padding:16px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid ${colors.border};">
   <div style="display:flex;align-items:center;gap:8px;">
-    <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#7C3AED);display:flex;align-items:center;justify-content:center;">
+    <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:flex;align-items:center;justify-content:center;">
       <span style="color:white;font-size:14px;font-weight:bold;">⚡</span>
     </div>
     <span style="font-weight:700;color:${colors.h};">${p.logo || 'MonSite'}</span>
   </div>
   <div style="display:flex;gap:24px;">${links}</div>
-  <a href="#" style="background:#2563EB;color:white;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">${p.ctaLabel || 'Commencer'}</a>
+  <a href="#" style="background:var(--accent);color:white;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">${p.ctaLabel || 'Commencer'}</a>
 </nav>`;
 }
 
@@ -80,13 +80,13 @@ function renderHero(props: Record<string, unknown>): string {
   return `
 <section style="${bgCss(p.bg)}padding:${pad(p.paddingY)} 32px;text-align:center;position:relative;overflow:hidden;">
   <div style="max-width:900px;margin:0 auto;position:relative;z-index:1;">
-    ${p.badge ? `<span style="display:inline-block;padding:6px 16px;border-radius:999px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;font-size:14px;font-weight:500;margin-bottom:24px;">✦ ${p.badge}</span>` : ''}
+    ${p.badge ? `<span style="display:inline-block;padding:6px 16px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);color:var(--accent);font-size:14px;font-weight:500;margin-bottom:24px;">✦ ${p.badge}</span>` : ''}
     <h1 style="font-size:clamp(2.5rem,6vw,4rem);font-weight:800;line-height:1.1;color:${colors.h};margin:0 0 20px;">
-      ${p.title} <span style="background:linear-gradient(90deg,#60A5FA,#A78BFA,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${p.titleGradient}</span>
+      ${p.title} <span style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${p.titleGradient}</span>
     </h1>
     <p style="font-size:18px;color:${colors.body};max-width:700px;margin:0 auto 40px;line-height:1.7;">${p.subtitle}</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-      <a href="#" style="background:linear-gradient(135deg,#2563EB,#7C3AED);color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;">✦ ${p.ctaLabel || 'Commencer'}</a>
+      <a href="#" style="background:linear-gradient(135deg,var(--accent-from),var(--accent-to));color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;">✦ ${p.ctaLabel || 'Commencer'}</a>
       ${p.ctaSecondaryLabel ? `<a href="#" style="background:rgba(255,255,255,0.06);border:1px solid ${colors.border};color:${colors.h};padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;">${p.ctaSecondaryLabel} →</a>` : ''}
     </div>
     ${stats}
@@ -102,7 +102,7 @@ function renderFeatures(props: Record<string, unknown>): string {
   const cardBorder = isLight(p.bg) ? '#E5E7EB' : 'rgba(255,255,255,0.07)';
   const items = (p.items ?? []).map((item) => `
     <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:16px;padding:24px;">
-      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(124,58,237,0.2));border:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:18px;">⚡</div>
+      <div style="width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--accent) 15%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:18px;">⚡</div>
       <h3 style="font-weight:600;color:${colors.h};margin:0 0 8px;">${item.title}</h3>
       <p style="font-size:14px;color:${colors.body};line-height:1.6;margin:0;">${item.description}</p>
     </div>`).join('');
@@ -110,7 +110,7 @@ function renderFeatures(props: Record<string, unknown>): string {
 <section style="${bgCss(p.bg)}padding:${pad(p.paddingY)} 32px;">
   <div style="max-width:${maxW(p.contentWidth)};margin:0 auto;">
     <div style="text-align:center;margin-bottom:56px;">
-      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
+      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);color:var(--accent);font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
       <h2 style="font-size:2.25rem;font-weight:700;color:${colors.h};margin:0 0 16px;">${p.title}</h2>
       ${p.subtitle ? `<p style="color:${colors.body};max-width:600px;margin:0 auto;">${p.subtitle}</p>` : ''}
     </div>
@@ -140,7 +140,7 @@ function renderCta(props: Record<string, unknown>): string {
   const p = props as { title: string; subtitle: string; ctaLabel: string; ctaSecondaryLabel: string; variant: string; bg?: string; paddingY?: string };
   const colors = tc(p.bg);
   const innerBg = p.variant === 'gradient'
-    ? 'background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(124,58,237,0.2));border:1px solid rgba(59,130,246,0.2);'
+    ? 'background:linear-gradient(135deg,color-mix(in srgb,var(--accent-from) 20%,transparent),color-mix(in srgb,var(--accent-to) 20%,transparent));border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);'
     : p.variant === 'dark'
     ? 'background:#111827;border:1px solid rgba(255,255,255,0.05);'
     : 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);';
@@ -151,7 +151,7 @@ function renderCta(props: Record<string, unknown>): string {
       <h2 style="font-size:2.25rem;font-weight:700;color:${colors.h};margin:0 0 16px;">${p.title}</h2>
       <p style="color:${colors.body};margin:0 0 32px;">${p.subtitle}</p>
       <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-        <a href="#" style="background:linear-gradient(135deg,#2563EB,#7C3AED);color:white;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:600;">✦ ${p.ctaLabel}</a>
+        <a href="#" style="background:linear-gradient(135deg,var(--accent-from),var(--accent-to));color:white;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:600;">✦ ${p.ctaLabel}</a>
         ${p.ctaSecondaryLabel ? `<a href="#" style="background:rgba(255,255,255,0.08);color:${colors.h};padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:600;">${p.ctaSecondaryLabel} →</a>` : ''}
       </div>
     </div>
@@ -179,7 +179,7 @@ function renderPricing(props: Record<string, unknown>): string {
 <section style="${bgCss(p.bg)}padding:${pad(p.paddingY)} 32px;">
   <div style="max-width:1100px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:56px;">
-      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);color:#A78BFA;font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
+      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);color:var(--accent);font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
       <h2 style="font-size:2.25rem;font-weight:700;color:${colors.h};margin:0 0 12px;">${p.title}</h2>
       ${p.subtitle ? `<p style="color:${colors.body};">${p.subtitle}</p>` : ''}
     </div>
@@ -202,7 +202,7 @@ function renderFaq(props: Record<string, unknown>): string {
 <section style="${bgCss(p.bg)}padding:${pad(p.paddingY)} 32px;">
   <div style="max-width:800px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:56px;">
-      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
+      ${p.badge ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);color:var(--accent);font-size:13px;font-weight:500;margin-bottom:16px;">${p.badge}</span>` : ''}
       <h2 style="font-size:2.25rem;font-weight:700;color:${colors.h};margin:0;">${p.title}</h2>
     </div>
     <div>${items}</div>
@@ -218,7 +218,7 @@ function renderTestimonials(props: Record<string, unknown>): string {
       <div style="display:flex;gap:2px;margin-bottom:16px;">${'⭐'.repeat(5)}</div>
       <p style="color:${colors.body};font-size:14px;line-height:1.7;margin:0 0 16px;">"${item.text}"</p>
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#7C3AED);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">${(item.avatar || item.name?.slice(0, 2) || 'AB')}</div>
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">${(item.avatar || item.name?.slice(0, 2) || 'AB')}</div>
         <div><p style="font-weight:600;font-size:14px;color:${colors.h};margin:0;">${item.name}</p><p style="font-size:12px;color:${colors.muted};margin:0;">${item.role}, ${item.company}</p></div>
       </div>
     </div>`).join('');
@@ -263,7 +263,7 @@ function renderFooter(props: Record<string, unknown>): string {
     <div style="display:grid;grid-template-columns:2fr repeat(${p.columns?.length ?? 3},1fr);gap:40px;margin-bottom:48px;">
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-          <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#7C3AED);display:flex;align-items:center;justify-content:center;"><span style="color:white;font-size:12px;">⚡</span></div>
+          <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:flex;align-items:center;justify-content:center;"><span style="color:white;font-size:12px;">⚡</span></div>
           <span style="font-weight:700;color:${colors.h};">${p.logo}</span>
         </div>
         <p style="font-size:14px;color:${colors.muted};line-height:1.6;max-width:280px;">${p.description}</p>
@@ -299,37 +299,69 @@ function renderImage(props: Record<string, unknown>): string {
 }
 
 function renderDivider(props: Record<string, unknown>): string {
-  const p = props as { bg?: string };
+  const p = props as { bg?: string; style?: string; width?: string; spacing?: string };
   const colors = tc(p.bg);
-  return `<div style="${bgCss(p.bg)}padding:16px 32px;"><hr style="border:none;border-top:1px solid ${colors.border};max-width:50%;margin:0 auto;" /></div>`;
+  const widthMap: Record<string, string> = { sm: '25%', md: '50%', lg: '75%', full: '100%' };
+  const padMap:   Record<string, string> = { sm: '16px', md: '32px', lg: '48px' };
+  const maxWidth = widthMap[p.width ?? 'md'] ?? '50%';
+  const padding  = padMap[p.spacing ?? 'md'] ?? '32px';
+  const styleMap: Record<string, string> = {
+    line:   `border-top:1px solid ${colors.border};`,
+    dashed: `border-top:1px dashed ${colors.border};`,
+    dotted: `border-top:1px dotted ${colors.border};`,
+    thick:  `border-top:3px solid ${colors.border};`,
+    double: `border-top:3px double ${colors.border};`,
+  };
+  const hrStyle = styleMap[p.style ?? 'line'] ?? styleMap.line;
+  return `<div style="${bgCss(p.bg)}padding:${padding} 32px;"><hr style="border:none;${hrStyle}max-width:${maxWidth};margin:0 auto;" /></div>`;
 }
 
 // ─── Block dispatch ───────────────────────────────────────────────────────────
 
 function renderBlock(type: string, props: Record<string, unknown>): string {
+  let inner = '';
   switch (type) {
-    case 'navbar':       return renderNavbar(props);
-    case 'hero':         return renderHero(props);
-    case 'features':     return renderFeatures(props);
-    case 'stats':        return renderStats(props);
-    case 'cta':          return renderCta(props);
-    case 'pricing':      return renderPricing(props);
-    case 'faq':          return renderFaq(props);
-    case 'testimonials': return renderTestimonials(props);
-    case 'logowall':     return renderLogoWall(props);
-    case 'footer':       return renderFooter(props);
-    case 'text':         return renderText(props);
-    case 'image':        return renderImage(props);
-    case 'divider':      return renderDivider(props);
+    case 'navbar':       inner = renderNavbar(props);       break;
+    case 'hero':         inner = renderHero(props);         break;
+    case 'features':     inner = renderFeatures(props);     break;
+    case 'stats':        inner = renderStats(props);        break;
+    case 'cta':          inner = renderCta(props);          break;
+    case 'pricing':      inner = renderPricing(props);      break;
+    case 'faq':          inner = renderFaq(props);          break;
+    case 'testimonials': inner = renderTestimonials(props); break;
+    case 'logowall':     inner = renderLogoWall(props);     break;
+    case 'footer':       inner = renderFooter(props);       break;
+    case 'text':         inner = renderText(props);         break;
+    case 'image':        inner = renderImage(props);        break;
+    case 'divider':      inner = renderDivider(props);      break;
     default:             return '';
   }
+
+  // Wrap with data-anim if an animation preset is set
+  const anim = props.animation as string | undefined;
+  if (anim && anim !== 'none') {
+    return `<div data-anim="${anim}">${inner}</div>`;
+  }
+  return inner;
 }
 
-// ─── Shared CSS ───────────────────────────────────────────────────────────────
+// ─── Shared CSS (+ scroll animation classes) ─────────────────────────────────
 
-const SHARED_CSS = `
+const ACCENT_COLORS: Record<string, { from: string; to: string; solid: string }> = {
+  blue:    { from: '#2563EB', to: '#7C3AED', solid: '#2563EB' },
+  violet:  { from: '#7C3AED', to: '#EC4899', solid: '#7C3AED' },
+  emerald: { from: '#10B981', to: '#06B6D4', solid: '#10B981' },
+  rose:    { from: '#F43F5E', to: '#FB923C', solid: '#F43F5E' },
+  amber:   { from: '#F59E0B', to: '#EF4444', solid: '#F59E0B' },
+  cyan:    { from: '#06B6D4', to: '#3B82F6', solid: '#06B6D4' },
+};
+
+function buildSharedCss(fontFamily: string, primaryColor = 'blue'): string {
+  const accent = ACCENT_COLORS[primaryColor] ?? ACCENT_COLORS.blue;
+  return `
+  :root { --accent: ${accent.solid}; --accent-from: ${accent.from}; --accent-to: ${accent.to}; }
   *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  body { margin: 0; font-family: '${fontFamily}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   img { max-width: 100%; height: auto; display: block; }
   a { transition: opacity 0.2s; }
   a:hover { opacity: 0.8; }
@@ -343,11 +375,38 @@ const SHARED_CSS = `
     section, footer, nav { padding-left: 16px !important; padding-right: 16px !important; }
   }
   @keyframes blob-float { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-20px) scale(1.05); } 66% { transform: translate(-20px,10px) scale(0.98); } }
+
+  /* Scroll-triggered animation classes — populated by IntersectionObserver */
+  [data-anim] { transition-timing-function: cubic-bezier(0.22,1,0.36,1); }
+  [data-anim="fade-up"]     { opacity: 0; transform: translateY(40px);             transition: opacity 0.6s, transform 0.6s; }
+  [data-anim="fade-in"]     { opacity: 0;                                           transition: opacity 0.7s; }
+  [data-anim="slide-left"]  { opacity: 0; transform: translateX(-60px);            transition: opacity 0.6s, transform 0.6s; }
+  [data-anim="slide-right"] { opacity: 0; transform: translateX(60px);             transition: opacity 0.6s, transform 0.6s; }
+  [data-anim="zoom-in"]     { opacity: 0; transform: scale(0.88);                  transition: opacity 0.55s, transform 0.55s; }
+  [data-anim="flip-up"]     { opacity: 0; transform: perspective(1200px) rotateX(20deg) translateY(30px); transition: opacity 0.65s, transform 0.65s; }
+  [data-anim].anim-visible  { opacity: 1; transform: none; }
 `;
+}
+
+// ─── IntersectionObserver script for scroll animations ────────────────────────
+
+const ANIM_SCRIPT = `
+<script>
+(function(){
+  var els = document.querySelectorAll('[data-anim]');
+  if (!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('anim-visible'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '-80px' });
+  els.forEach(function(el){ io.observe(el); });
+})();
+</script>`;
 
 // ─── Build one HTML file ──────────────────────────────────────────────────────
 
-function buildHtml(title: string, description: string, body: string): string {
+function buildHtml(title: string, description: string, body: string, fontFamily = 'Inter', primaryColor = 'blue'): string {
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -355,10 +414,11 @@ function buildHtml(title: string, description: string, body: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}</title>
   ${description ? `<meta name="description" content="${description}" />` : ''}
-  <style>${SHARED_CSS}</style>
+  <style>${buildSharedCss(fontFamily, primaryColor)}</style>
 </head>
 <body>
 ${body}
+${ANIM_SCRIPT}
 <!-- Generated by Happi Web Creator -->
 </body>
 </html>`;
@@ -381,7 +441,9 @@ function download(content: string, filename: string): void {
 // Multi-page project   → downloads one .html file per page (sequential downloads)
 
 export function exportProjectToHtml(project: Project): void {
-  const slug = project.name.toLowerCase().replace(/\s+/g, '-');
+  const slug         = project.name.toLowerCase().replace(/\s+/g, '-');
+  const fontFamily   = project.theme?.fontFamily ?? 'Inter';
+  const primaryColor = project.theme?.primaryColor ?? 'blue';
 
   if (project.pages.length === 1) {
     // Single page — simple export
@@ -390,7 +452,7 @@ export function exportProjectToHtml(project: Project): void {
     const title = seo?.title || project.name;
     const desc  = seo?.description || '';
     const body  = (page.blocks ?? []).map((b) => renderBlock(b.type, b.props)).join('\n');
-    download(buildHtml(title, desc, body), `${slug}.html`);
+    download(buildHtml(title, desc, body, fontFamily, primaryColor), `${slug}.html`);
   } else {
     // Multi-page — one file per page, small delay between downloads
     project.pages.forEach((page, i) => {
@@ -401,7 +463,7 @@ export function exportProjectToHtml(project: Project): void {
       const pageSlug = (seo?.slug || `/${page.name.toLowerCase().replace(/\s+/g, '-')}`).replace(/^\//, '');
       const filename = i === 0 ? 'index.html' : `${pageSlug || `page-${i + 1}`}.html`;
       // Stagger downloads so browser doesn't block them
-      setTimeout(() => download(buildHtml(title, desc, body), `${slug}/${filename}`), i * 300);
+      setTimeout(() => download(buildHtml(title, desc, body, fontFamily, primaryColor), `${slug}/${filename}`), i * 300);
     });
   }
 }
